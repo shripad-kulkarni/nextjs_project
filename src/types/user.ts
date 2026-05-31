@@ -13,6 +13,9 @@ export interface UserDto {
   pinCode: string
   bloodGroup?: string | null
   emergencyContact?: string | null
+  description?: string | null
+  profilePhotoUrl?: string | null
+  introVideoUrl?: string | null
 }
 
 export interface CreateUserDto {
@@ -28,6 +31,9 @@ export interface CreateUserDto {
   pinCode: string
   bloodGroup?: string
   emergencyContact?: string
+  description?: string
+  profilePhotoUrl?: string
+  introVideoUrl?: string
 }
 
 export interface UpdateUserDto {
@@ -38,6 +44,9 @@ export interface UpdateUserDto {
   city: string
   state: string
   pinCode: string
+  description?: string
+  profilePhotoUrl?: string
+  introVideoUrl?: string
 }
 
 export interface UserFilterParams {
@@ -60,5 +69,3 @@ export interface PaginatedApiResponse<T> {
   hasNextPage: boolean
 }
 
-export const GENDERS = ["Male", "Female", "Other"] as const
-export const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"] as const

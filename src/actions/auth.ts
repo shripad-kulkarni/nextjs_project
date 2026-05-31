@@ -3,10 +3,8 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { loginApi, registerApi } from "@/lib/api/auth"
-import { SESSION_COOKIE } from "@/lib/session"
+import { SESSION_COOKIE, SESSION_EXPIRY } from "@/constants"
 import type { LoginCredentials, RegisterCredentials } from "@/types/auth"
-
-const SIXTY_MINUTES = 60 * 60
 
 export async function loginAction(
   credentials: LoginCredentials,
@@ -30,7 +28,7 @@ export async function loginAction(
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
-        maxAge: SIXTY_MINUTES,
+        maxAge: SESSION_EXPIRY,
         path: "/",
       },
     )

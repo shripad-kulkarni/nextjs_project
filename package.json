@@ -25,7 +25,6 @@
     "jspdf": "^2.5.1",
     "lucide-react": "^0.469.0",
     "next": "16.2.6",
-    "next-auth": "^5.0.0-beta.19",
     "qrcode.react": "^4.2.0",
     "radix-ui": "^1.4.3",
     "razorpay": "^2.9.2",

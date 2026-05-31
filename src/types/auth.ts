@@ -25,5 +25,4 @@ export interface ApiResponse<T = undefined> {
   errors?: string[]
 }
 
-export const ROLES = ["Admin", "Teacher", "Accountant", "Staff"] as const
-export type Role = (typeof ROLES)[number]
+export type Role = "Admin" | "Manager" | "User" | "Guest"

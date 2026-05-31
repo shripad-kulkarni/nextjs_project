@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
-import { SESSION_COOKIE } from "@/lib/session"
+import { SESSION_COOKIE, PROTECTED_ROUTES } from "@/constants"
 
-const PROTECTED = ["/dashboard", "/users"]
-
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const isLoggedIn = !!req.cookies.get(SESSION_COOKIE)?.value
   const { pathname } = req.nextUrl
 
-  const isProtected = PROTECTED.some(
+  const isProtected = PROTECTED_ROUTES.some(
     (p) => pathname === p || pathname.startsWith(p + "/"),
   )
 

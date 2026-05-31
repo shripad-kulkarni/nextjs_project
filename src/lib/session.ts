@@ -1,6 +1,5 @@
 import { cookies } from "next/headers"
-
-export const SESSION_COOKIE = "auth_session"
+import { SESSION_COOKIE } from "@/constants"
 
 export interface SessionData {
   token: string
