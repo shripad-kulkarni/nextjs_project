@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, LogOut, ChevronLeft, Settings } from "lucide-react"
+import { LayoutDashboard, Users, LogOut, ChevronLeft, Settings, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   Tooltip,
@@ -15,13 +15,14 @@ import {
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true  },
   { href: "/users",     label: "Users",     icon: Users,           exact: false },
+  { href: "/chat",      label: "Chat",      icon: MessageSquare,   exact: false },
   { href: "/settings",  label: "Settings",  icon: Settings,        exact: true  },
 ]
 
 interface Props {
   userName: string
   userEmail: string
-  signOut: () => Promise<never>
+  signOut: () => Promise<void>
 }
 
 export function AppSidebar({ userName, userEmail, signOut }: Props) {
