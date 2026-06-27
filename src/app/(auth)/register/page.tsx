@@ -12,23 +12,15 @@ import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
 import { registerAction, loginAction } from "@/actions/auth"
-import { ROLES } from "@/constants"
 
 const registerSchema = z
   .object({
     firstName: z.string().min(2, "At least 2 characters"),
     lastName: z.string().min(2, "At least 2 characters"),
     email: z.string().email("Please enter a valid email address"),
-    role: z.enum(ROLES, { required_error: "Please select a role" }),
+    phone: z.string().regex(/^\+?[0-9\s\-()]{7,15}$/, "Enter a valid phone number").optional().or(z.literal("")),
     password: z
       .string()
       .min(8, "At least 8 characters")
@@ -53,7 +45,6 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<RegisterFormData>({ resolver: zodResolver(registerSchema) })
 
@@ -65,7 +56,8 @@ export default function RegisterPage() {
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
-        role: data.role,
+        role: "User",
+        phone: data.phone || undefined,
       })
 
       if (regResult.error) {
@@ -135,20 +127,20 @@ export default function RegisterPage() {
           {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
         </div>
 
-        {/* Role */}
+        {/* Phone */}
         <div className="space-y-1.5">
-          <Label htmlFor="role">Role</Label>
-          <Select onValueChange={(value) => setValue("role", value as any)}>
-            <SelectTrigger id="role" className={errors.role ? "border-red-400" : ""}>
-              <SelectValue placeholder="Select your role" />
-            </SelectTrigger>
-            <SelectContent>
-              {ROLES.map((role) => (
-                <SelectItem key={role} value={role}>{role}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.role && <p className="text-xs text-red-500">{errors.role.message}</p>}
+          <Label htmlFor="phone">
+            Mobile number <span className="text-muted-foreground">(optional)</span>
+          </Label>
+          <Input
+            id="phone"
+            type="tel"
+            placeholder="+91 98765 43210"
+            autoComplete="tel"
+            {...register("phone")}
+            className={errors.phone ? "border-red-400" : ""}
+          />
+          {errors.phone && <p className="text-xs text-red-500">{errors.phone.message}</p>}
         </div>
 
         {/* Password */}

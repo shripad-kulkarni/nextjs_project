@@ -9,6 +9,7 @@ export interface RegisterCredentials {
   firstName: string
   lastName: string
   role: string
+  phone?: string
 }
 
 export interface AuthUser {

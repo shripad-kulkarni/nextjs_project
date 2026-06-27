@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { format, parseISO } from "date-fns"
-import { MoreHorizontal, Pencil, Trash2, FileDown, Loader2 } from "lucide-react"
+import { MoreHorizontal, Pencil, Trash2, FileDown, Award, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 import {
@@ -60,26 +60,51 @@ export function UsersTable({
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [downloadingId, setDownloadingId] = useState<number | null>(null)
+  const [downloadingProfileId, setDownloadingProfileId] = useState<number | null>(null)
+  const [downloadingCertId, setDownloadingCertId] = useState<number | null>(null)
 
-  const downloadProfile = async (userId: number) => {
-    setDownloadingId(userId)
+  const downloadFile = async (
+    userId: number,
+    apiPath: string,
+    fileName: string,
+    setLoading: (id: number | null) => void,
+    errorMsg: string,
+  ) => {
+    setLoading(userId)
     try {
-      const res = await fetch(`/api/users/${userId}/profile-report`)
+      const res = await fetch(apiPath)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const blob = await res.blob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement("a")
       a.href = url
-      a.download = `UserReport_${userId}.pdf`
+      a.download = fileName
       a.click()
       URL.revokeObjectURL(url)
     } catch {
-      toast.error("Failed to download profile report.")
+      toast.error(errorMsg)
     } finally {
-      setDownloadingId(null)
+      setLoading(null)
     }
   }
+
+  const downloadProfile = (userId: number) =>
+    downloadFile(
+      userId,
+      `/api/users/${userId}/profile-report`,
+      `UserReport_${userId}.pdf`,
+      setDownloadingProfileId,
+      "Failed to download profile report.",
+    )
+
+  const downloadCertificate = (userId: number) =>
+    downloadFile(
+      userId,
+      `/api/users/${userId}/certificate`,
+      `Certificate_${userId}.pdf`,
+      setDownloadingCertId,
+      "Failed to download certificate.",
+    )
 
   const goToPage = (page: number) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -163,13 +188,23 @@ export function UsersTable({
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => downloadProfile(user.id)}
-                          disabled={downloadingId === user.id}
+                          disabled={downloadingProfileId === user.id}
                         >
-                          {downloadingId === user.id
+                          {downloadingProfileId === user.id
                             ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             : <FileDown className="mr-2 h-4 w-4" />
                           }
                           Download Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => downloadCertificate(user.id)}
+                          disabled={downloadingCertId === user.id}
+                        >
+                          {downloadingCertId === user.id
+                            ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            : <Award className="mr-2 h-4 w-4" />
+                          }
+                          Download Certificate
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem

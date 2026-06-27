@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, LayoutDashboard, Users, LogOut, Settings, MessageSquare } from "lucide-react"
+import { Menu, LayoutDashboard, Users, LogOut, Settings, MessageSquare, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,7 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true  },
   { href: "/users",     label: "Users",     icon: Users,           exact: false },
   { href: "/chat",      label: "Chat",      icon: MessageSquare,   exact: false },
+  { href: "/messages",  label: "Messages",  icon: Mail,            exact: false },
   { href: "/settings",  label: "Settings",  icon: Settings,        exact: true  },
 ]
 
