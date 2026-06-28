@@ -4,7 +4,6 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { toast } from "sonner"
@@ -13,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 
-import { registerAction, loginAction } from "@/actions/auth"
+import { registerAction } from "@/actions/auth"
 
 const registerSchema = z
   .object({
@@ -37,10 +36,10 @@ const registerSchema = z
 type RegisterFormData = z.infer<typeof registerSchema>
 
 export default function RegisterPage() {
-  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [registered, setRegistered] = useState(false)
 
   const {
     register,
@@ -65,17 +64,29 @@ export default function RegisterPage() {
         return
       }
 
-      const loginResult = await loginAction({ email: data.email, password: data.password })
-      if (loginResult.error) {
-        toast.success("Account created! Please sign in.")
-        router.push("/login")
-      } else {
-        toast.success("Account created successfully!")
-        router.push("/dashboard")
-      }
+      setRegistered(true)
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (registered) {
+    return (
+      <div className="text-center space-y-4">
+        <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto">
+          <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-semibold text-gray-900">Check your email</h2>
+        <p className="text-sm text-muted-foreground">
+          We&apos;ve sent a verification link to your email address. Click it to activate your account.
+        </p>
+        <Link href="/login">
+          <Button variant="outline" className="w-full h-10 mt-2">Back to sign in</Button>
+        </Link>
+      </div>
+    )
   }
 
   return (

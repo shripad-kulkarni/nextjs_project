@@ -15,7 +15,7 @@ export async function getContactMessagesApi(filter: ContactFilterParams, token: 
   if (filter.dateFrom) params.dateFrom  = filter.dateFrom
   if (filter.dateTo)   params.dateTo    = filter.dateTo
 
-  const { data } = await apiClient.get<PaginatedContactResponse>("/api/v1/contact", {
+  const { data } = await apiClient.get<PaginatedContactResponse>("/v1/contact", {
     params,
     headers: authHeaders(token),
   })

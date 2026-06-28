@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { format, parseISO } from "date-fns"
-import { MoreHorizontal, Pencil, Trash2, FileDown, Award, Loader2 } from "lucide-react"
+import { MoreHorizontal, Pencil, Trash2, FileDown, Award, Loader2, UserCheck, UserX } from "lucide-react"
 import { toast } from "sonner"
 
 import {
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import type { UserDto } from "@/types/user"
+import { setUserActiveAction } from "@/actions/users"
 
 const avatarPalette = [
   "bg-blue-100 text-blue-700",
@@ -62,6 +63,7 @@ export function UsersTable({
   const searchParams = useSearchParams()
   const [downloadingProfileId, setDownloadingProfileId] = useState<number | null>(null)
   const [downloadingCertId, setDownloadingCertId] = useState<number | null>(null)
+  const [togglingId, setTogglingId] = useState<number | null>(null)
 
   const downloadFile = async (
     userId: number,
@@ -106,6 +108,21 @@ export function UsersTable({
       "Failed to download certificate.",
     )
 
+  const handleToggleActive = async (user: UserDto) => {
+    setTogglingId(user.id)
+    try {
+      const result = await setUserActiveAction(user.id, !user.isActive)
+      if (result.error) {
+        toast.error(result.error)
+      } else {
+        toast.success(user.isActive ? "User deactivated." : "User activated.")
+        router.refresh()
+      }
+    } finally {
+      setTogglingId(null)
+    }
+  }
+
   const goToPage = (page: number) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("page", String(page))
@@ -132,6 +149,7 @@ export function UsersTable({
               <TableHead className="font-semibold text-gray-700">Phone</TableHead>
               <TableHead className="font-semibold text-gray-700">Date of birth</TableHead>
               <TableHead className="font-semibold text-gray-700">City</TableHead>
+              <TableHead className="font-semibold text-gray-700">Status</TableHead>
               <TableHead className="w-12" />
             </TableRow>
           </TableHeader>
@@ -171,6 +189,16 @@ export function UsersTable({
                   <TableCell className="text-sm text-gray-600">{user.city}</TableCell>
 
                   <TableCell>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${
+                      user.isActive
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                        : "bg-red-50 text-red-600 border-red-200"
+                    }`}>
+                      {user.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </TableCell>
+
+                  <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-700">
@@ -205,6 +233,23 @@ export function UsersTable({
                             : <Award className="mr-2 h-4 w-4" />
                           }
                           Download Certificate
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => handleToggleActive(user)}
+                          disabled={togglingId === user.id}
+                          className={user.isActive
+                            ? "text-amber-600 focus:text-amber-700 focus:bg-amber-50"
+                            : "text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50"
+                          }
+                        >
+                          {togglingId === user.id
+                            ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            : user.isActive
+                              ? <UserX className="mr-2 h-4 w-4" />
+                              : <UserCheck className="mr-2 h-4 w-4" />
+                          }
+                          {user.isActive ? "Deactivate" : "Activate"}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem

@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation"
 import { getSession } from "@/lib/session"
 import { signOutAction } from "@/actions/auth"
-import { AppSidebar } from "@/components/app-sidebar"
-import { AdminMobileHeader } from "@/components/admin-mobile-header"
+import { AppSidebar } from "@/components/admin/app-sidebar"
+import { AdminMobileHeader } from "@/components/admin/admin-mobile-header"
 
 export default async function DashboardLayout({
   children,

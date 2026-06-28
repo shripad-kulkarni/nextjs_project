@@ -14,7 +14,7 @@ async function fetchMultipart(
   formData: FormData,
   token: string,
 ): Promise<ApiResponse<UserDto>> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5187/api"
   const res = await fetch(`${baseUrl}${path}`, {
     method,
     headers: { Authorization: `Bearer ${token}` },
@@ -30,7 +30,7 @@ async function fetchMultipart(
 }
 
 export async function getUserByIdApi(id: number, token: string) {
-  const { data } = await apiClient.get<ApiResponse<UserDto>>(`/api/v1/users/${id}`, {
+  const { data } = await apiClient.get<ApiResponse<UserDto>>(`/v1/users/${id}`, {
     headers: authHeaders(token),
   })
   return data.data!
@@ -45,7 +45,7 @@ export async function getPublicUsersApi(filter: UserFilterParams) {
   if (filter.gender) params.gender = filter.gender
   if (filter.isActive !== undefined) params.isActive = filter.isActive
 
-  const { data } = await apiClient.get<PaginatedApiResponse<UserDto>>("/api/v1/users", { params })
+  const { data } = await apiClient.get<PaginatedApiResponse<UserDto>>("/v1/users", { params })
   return data
 }
 
@@ -58,7 +58,7 @@ export async function getUsersApi(filter: UserFilterParams, token: string) {
   if (filter.gender) params.gender = filter.gender
   if (filter.isActive !== undefined) params.isActive = filter.isActive
 
-  const { data } = await apiClient.get<PaginatedApiResponse<UserDto>>("/api/v1/users", {
+  const { data } = await apiClient.get<PaginatedApiResponse<UserDto>>("/v1/users", {
     params,
     headers: authHeaders(token),
   })
@@ -66,15 +66,25 @@ export async function getUsersApi(filter: UserFilterParams, token: string) {
 }
 
 export async function createUserApi(formData: FormData, token: string) {
-  return fetchMultipart("/api/v1/users", "POST", formData, token)
+  return fetchMultipart("/v1/users", "POST", formData, token)
 }
 
 export async function updateUserApi(id: number, formData: FormData, token: string) {
-  return fetchMultipart(`/api/v1/users/${id}`, "PUT", formData, token)
+  return fetchMultipart(`/v1/users/${id}`, "PUT", formData, token)
 }
 
 export async function deleteUserApi(id: number, token: string) {
-  await apiClient.delete(`/api/v1/users/${id}`, {
+  await apiClient.delete(`/v1/users/${id}`, {
     headers: authHeaders(token),
   })
+}
+
+export async function setUserActiveApi(id: number, isActive: boolean, token: string) {
+  const action = isActive ? "activate" : "deactivate"
+  const { data } = await apiClient.patch<ApiResponse<never>>(
+    `/v1/users/${id}/${action}`,
+    null,
+    { headers: authHeaders(token) },
+  )
+  return data
 }

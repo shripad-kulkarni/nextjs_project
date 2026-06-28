@@ -11,6 +11,7 @@ export interface UserDto {
   city: string
   state: string
   pinCode: string
+  isActive: boolean
   bloodGroup?: string | null
   emergencyContact?: string | null
   description?: string | null

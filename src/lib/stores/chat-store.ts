@@ -34,13 +34,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
   init: async (token, currentUserId) => {
     if (get().connection) return
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5187/api"
+    // Hub lives at the root, not under /api
+    const hubBaseUrl = apiUrl.replace(/\/api$/, "")
 
     // skipNegotiation + WebSockets avoids the HTTP negotiation fetch entirely.
     // This prevents self-signed cert rejections and CORS preflight failures in dev.
     // SignalR converts http:// → ws:// and https:// → wss:// automatically.
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${apiUrl}/hubs/chat`, {
+      .withUrl(`${hubBaseUrl}/hubs/chat`, {
         accessTokenFactory: () => token,
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,

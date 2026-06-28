@@ -9,7 +9,7 @@ const devHttpsAgent =
     : undefined
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5187/api",
   headers: { "Content-Type": "application/json" },
   timeout: 10_000,
   httpsAgent: devHttpsAgent,

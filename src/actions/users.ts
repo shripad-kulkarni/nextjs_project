@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { getSession } from "@/lib/session"
-import { createUserApi, updateUserApi, deleteUserApi } from "@/lib/api/users"
+import { createUserApi, updateUserApi, deleteUserApi, setUserActiveApi } from "@/lib/api/users"
 
 type ActionResult = { error?: string; errors?: string[] }
 
@@ -53,5 +53,19 @@ export async function deleteUserAction(id: number): Promise<ActionResult> {
     return {}
   } catch (err: any) {
     return extractError(err, "Failed to delete user.")
+  }
+}
+
+export async function setUserActiveAction(id: number, isActive: boolean): Promise<ActionResult> {
+  const session = await getSession()
+  if (!session) return { error: "Unauthorized" }
+
+  try {
+    const result = await setUserActiveApi(id, isActive, session.token)
+    if (!result.isSuccess) return { error: result.message }
+    revalidatePath("/users")
+    return {}
+  } catch (err: any) {
+    return extractError(err, `Failed to ${isActive ? "activate" : "deactivate"} user.`)
   }
 }

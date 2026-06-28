@@ -21,7 +21,7 @@ const FALLBACK: InfoSettings = { name: "My App" }
 
 export const getInfoSettingsApi = cache(async (): Promise<InfoSettings> => {
   try {
-    const { data } = await apiClient.get<ApiResponse<InfoSettings>>("/api/v1/settings")
+    const { data } = await apiClient.get<ApiResponse<InfoSettings>>("/v1/settings")
     return data.data ?? FALLBACK
   } catch (err: any) {
     console.error("[InfoSettings] fetch failed:", err?.message ?? err)
@@ -30,7 +30,7 @@ export const getInfoSettingsApi = cache(async (): Promise<InfoSettings> => {
 })
 
 export async function getInfoSettingsAdminApi(token: string): Promise<InfoSettings> {
-  const { data } = await apiClient.get<ApiResponse<InfoSettings>>("/api/v1/settings", {
+  const { data } = await apiClient.get<ApiResponse<InfoSettings>>("/v1/settings", {
     headers: { Authorization: `Bearer ${token}` },
   })
   return data.data ?? FALLBACK
@@ -40,14 +40,14 @@ export async function updateInfoSettingsApi(
   payload: UpdateInfoSettingsPayload,
   token: string,
 ): Promise<void> {
-  await apiClient.put("/api/v1/settings", payload, {
+  await apiClient.put("/v1/settings", payload, {
     headers: { Authorization: `Bearer ${token}` },
   })
 }
 
 export async function uploadLogoApi(formData: FormData, token: string): Promise<string> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"
-  const res = await fetch(`${baseUrl}/api/v1/settings/logo`, {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5187/api"
+  const res = await fetch(`${baseUrl}/v1/settings/logo`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
