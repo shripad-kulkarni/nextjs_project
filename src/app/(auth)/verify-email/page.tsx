@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Loader2, CheckCircle, XCircle } from "lucide-react"
@@ -10,7 +10,7 @@ import { verifyEmailAction } from "@/actions/auth"
 
 type Status = "loading" | "success" | "error"
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams()
   const email = searchParams.get("email") ?? ""
   const token = searchParams.get("token") ?? ""
@@ -72,5 +72,20 @@ export default function VerifyEmailPage() {
         <Button variant="outline" className="w-full h-10 mt-2">Request a new link</Button>
       </Link>
     </div>
+  )
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="text-center space-y-4 py-4">
+          <Loader2 className="h-10 w-10 animate-spin text-blue-600 mx-auto" />
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        </div>
+      }
+    >
+      <VerifyEmailContent />
+    </Suspense>
   )
 }
